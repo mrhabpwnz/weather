@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Weather application</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrapper" id="wrapper">
+    <header class="header" id="header">
+        <div class="header__buttons-panel">
+            <button id="refreshButton" class="button button_refresh">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+            </button>
+            <button id="en" class="button button_en">EN</button>
+            <button id="ru" class="button button_ru">RU</button>
+            <button id="F" class="button button_F">°F</button>
+            <button id="C" class="button button_C">°C</button>
+        </div>
+        <div class="header__search-panel">
+            <button id="searchButton" class="button button_search">
+                <i class="fa fa-search-plus" aria-hidden="true"></i>
+            </button>
+            <input type="text" id="searchInput" class="button header__search-input">
+            <button id="microphoneButton" class="button button_microphone">
+                <i class="fa fa-microphone" aria-hidden="true"></i>
+            </button>
+        </div>
+    </header>
+    <main id="main" class="main">
+        <div id="weather" class="weather">
+            <div id="weather__table weather__table-big" class="weather__table">
+                <div id="weather__location" class="weather__location">
+                    <h1 class="weather__location-town"></h1>
+                    <div class="weather__location-country"></div>
+                </div>
+                <div class="weather__date"></div>
+                <div class="weather__time"></div>
+            </div>
+
+            <div class="weather__parameters">
+                <div id="weather__today" class="weather__today">
+                    <h2 id="degreesValue" class="degrees degrees-big"></h2>
+                    <span id="degreeSymbol" class="degree__symbol">Облачко</span>
+                </div>
+                <div class="weather__humidity-wind">
+                    <p class="weather__degrees">
+                        <span class="weather__degrees-apparent"></span>
+                        <span class="weather__degrees-value"></span>
+                        <span class="weather__degrees-symbol"></span>
+                    </p>
+                    <p id="windSpeed"></p>
+                    <p id="humidity"></p>
+                </div>
+            </div>
+            <div id="weather__nextDays" class="weather__nextDays">
+                <div class="weather__tomorrow1">
+                    <h3 class="degrees__day">Завтра</h3>
+                    <h3 class="degrees degrees-small">23</h3>
+                    <span class="degrees__symbol-small">C</span>
+                </div>
+                <div class="weather__table weather__table-small">
+                    <div class="weather__small"></div>
+                    <canvas id="icon1" class="icon-small" width="64" height="64"></canvas>
+                </div>
+                <div class="weather__tomorrow2">
+                    <h3 class="degrees__day">Послезавтра</h3>
+                    <h3 class="degrees degrees-small">24</h3>
+                    <span class="degrees__symbol-small">C</span>
+                </div>
+                <div class="weather__table weather__table-small">
+                    <div class="weather__small"></div>
+                    <canvas id="icon2" class="icon-small" width="64" height="64"></canvas>
+                </div>
+                <div class="weather__tomorrow3">
+                    <h3 class="degrees__day">После послезавтра</h3>
+                    <h3 class="degrees degrees-small">25</h3>
+                    <span class="degrees__symbol-small">C</span>
+                    <div class="weather__table weather__table-small">
+                        <div class="weather__small"></div>
+                        <canvas id="icon3" class="icon-small" width="64" height="64"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mapBlock" class="map__block">
+            <div class="map__wrapper">
+                <div class="map">MAP HERE</div>
+            </div>
+            <p class="latitude"></p>
+            <p class="longitude"></p>
+        </div>
+    </main>
+</div>
+<script src="script.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASA_uO8ONyHj7JfqduYvbahTu0HmScA74&callback=myMap"></script>
+</body>
+</html>
