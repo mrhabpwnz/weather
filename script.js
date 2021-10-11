@@ -8,7 +8,8 @@ window.addEventListener('load', () => {
     let date = document.querySelector('.weather__date');
     let time = document.querySelector('.weather__time');
     let weatherDegreesApparent = document.querySelector('.weather__degrees-apparent');
-    let weatherDegreesValue = document.querySelector('.weather__degrees-value');
+    let FDegrees = document.querySelector('#F');
+    let CDegrees = document.querySelector('#C');
     let weatherDegreesSymbol = document.querySelector('.weather__degrees-symbol');
     let windSpeed = document.querySelector('#windSpeed');
     let humidity = document.querySelector('#humidity');
@@ -38,16 +39,20 @@ window.addEventListener('load', () => {
                     let watches = setInterval(timer, 1000);
                     longitude.textContent = `Долгота: ${lon.toFixed(2)}`;
                     latitude.textContent = `Широта: ${lat.toFixed(2)}`;
+                    FDegrees.addEventListener('click', () => {
+
+                    })
+
+                    ymaps.ready(init);
+                    function init(){
+                        let myMap = new ymaps.Map("map", {
+                            center: [`${lat}`, `${lon}`],
+                            zoom: 10
+                        });
+                    }
                 })
 
         })
-    }
-    ymaps.ready(init);
-    function init(){
-        var myMap = new ymaps.Map("map", {
-            center: [55.76, 37.64],
-            zoom: 7
-        });
     }
 })
 
