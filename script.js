@@ -1,3 +1,5 @@
+'use strict';
+
 window.addEventListener('load', () => {
     let lon;
     let lat;
@@ -28,7 +30,7 @@ window.addEventListener('load', () => {
                 .then(data => {
                     console.log(data);
                     humidity.textContent = `Влажность: ${data.main.humidity} %`;
-                    windSpeed.textContent = `Скорость ветра: ${data.wind.speed} м/с`;
+                    windSpeed.textContent = `Скорость ветра: ${data.wind.speed.toFixed()} м/с`;
                     degrees.textContent = data.main.temp;
                     cityName.textContent = `${data.name}, ${data.sys.country}`;
                     weatherDegreesApparent.textContent = `Ощущается как: ${data.main.feels_like}`;
@@ -40,13 +42,13 @@ window.addEventListener('load', () => {
 
         })
     }
+    ymaps.ready(init);
+    function init(){
+        var myMap = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 7
+        });
+    }
 })
 
-function myMap() {
-    let mapCanvas = document.querySelector('.map');
-    let mapOptions = {
-        center: new google.maps.LatLng(51.5, -0.2),
-        zoom: 10
-    };
-    let map = new google.maps.Map(mapCanvas, mapOptions);
-}
+

@@ -134,8 +134,7 @@ body {
 
 .weather__tomorrow1,
 .weather__tomorrow2,
-.weather__tomorrow3,
-.map__block {
+.weather__tomorrow3 {
     margin: 0.5vw 2vw;
 }
 
@@ -143,4 +142,14 @@ body {
 .weather__tomorrow2,
 .weather__tomorrow3 {
     display: flex;
+}
+
+#map {
+    height: 50vh;
+    width: 23.3vw;
+
+}
+
+.map__block {
+    margin: 0 2vw;
 }
