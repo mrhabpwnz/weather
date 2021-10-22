@@ -11,7 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="owfont-master/css/owfont-regular.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 </head>
 <body>
 <div class="wrapper" id="wrapper">
@@ -29,7 +30,7 @@
             <button id="searchButton" class="button button_search">
                 <i class="fa fa-search-plus" aria-hidden="true"></i>
             </button>
-            <input type="text" id="searchInput" class="button header__search-input">
+            <input type="text" id="searchInput" class="button header__search-input" placeholder="Найти город">
             <button id="microphoneButton" class="button button_microphone">
                 <i class="fa fa-microphone" aria-hidden="true"></i>
             </button>
@@ -39,8 +40,8 @@
         <div id="weather" class="weather">
             <div id="weather__table weather__table-big" class="weather__table">
                 <div id="weather__location" class="weather__location">
-                    <h1 class="weather__location-town"></h1>
-                    <div class="weather__location-country"></div>
+                    <h1 id="town" class="weather__location-town"></h1>
+                    <div id="country" class="weather__location-country"></div>
                 </div>
                 <div class="weather__date"></div>
                 <div class="weather__time"></div>
@@ -100,7 +101,9 @@
     </main>
 </div>
 <script src="script.js"></script>
-<script src="https://api-maps.yandex.ru/2.1/?apikey=7cab0637-4cfc-434b-a904-7cf7efbdb724&lang=ru_RU" type="text/javascript">
-</script>
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly"
+        async
+></script>
 </body>
 </html>

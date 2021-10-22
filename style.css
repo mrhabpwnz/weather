@@ -14,8 +14,10 @@ h1 {
 }
 
 body {
-    height: 100vh;
-    background-color: black;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #wrapper {
@@ -147,10 +149,15 @@ body {
 #map {
     height: 50vh;
     width: 23.3vw;
-
+    clip-path: circle(47% at 50% 50%);
 }
 
 .map__block {
     margin: 1vw 2vw;
 }
 
+.custom-map-control-button {
+    margin-top: 30px;
+    padding: 2px;
+    color: #4d4d4d;
+}
