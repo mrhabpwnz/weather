@@ -6,8 +6,6 @@ let lon,
     date = document.querySelector('.weather__date'),
     time = document.querySelector('.weather__time'),
     weatherDegreesApparent = document.querySelector('.weather__degrees-apparent'),
-    FDegrees = document.querySelector('#F'),
-    CDegrees = document.querySelector('#C'),
     windSpeed = document.querySelector('#windSpeed'),
     humidity = document.querySelector('#humidity'),
     degrees = document.querySelector('#degreesValue'),
@@ -15,21 +13,29 @@ let lon,
     longitude = document.querySelector('.longitude'),
     backgroundChangeBtn = document.querySelector('#refreshButton'),
     microphone = document.querySelector('#microphoneButton'),
+    searchInput = document.querySelector('#searchInput'),
+    rotatingElem = document.querySelector('#rotating'),
+    smallIcon = document.querySelectorAll('.weather__icon-small'),
+    bigIcon = document.querySelector('#degreeSymbol'),
     map,
     marker,
     geocoder,
     responseDiv,
-    response,
-    infoWindow;
+    response;
 
 
 function startTalking() {
-    if(window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition){
-        console.log('Браузер поддерживает данную технологию');
-    }else{
-        console.log('Не поддерживается данным браузером');
-    }
+    let SpeechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+    SpeechRecognition.lang = "ru-RU";
+    SpeechRecognition.interimResults = true;
+    SpeechRecognition.onresult = function(event){
+        console.log(event);
+        searchInput.value = event.results[0][0].transcript;
+    };
+    SpeechRecognition.start();
+
 }
+
 
 function initMap() {
     navigator.geolocation.getCurrentPosition(position => {
@@ -71,61 +77,30 @@ function initMap() {
             if(e.key === 'Enter') {geocode({ address: inputText.value })}
         }
     );
+    function clear() {
+        marker.setMap(null);
+        responseDiv.style.display = "none";
+    }
 
-}
+    function geocode(request) {
+        clear();
+        geocoder
+            .geocode(request)
+            .then((result) => {
+                const { results } = result;
 
-function clear() {
-    marker.setMap(null);
-    responseDiv.style.display = "none";
-}
+                map.setCenter(results[0].geometry.location);
+                marker.setPosition(results[0].geometry.location);
+                marker.setMap(map);
+                responseDiv.style.display = "block";
+                response.innerText = JSON.stringify(result, null, 2);
+                return results;
+            })
+            .catch((e) => {
+                alert("Geocode was not successful for the following reason: " + e);
+            });
+    }
 
-function geocode(request) {
-    clear();
-    geocoder
-        .geocode(request)
-        .then((result) => {
-            const { results } = result;
-
-            map.setCenter(results[0].geometry.location);
-            marker.setPosition(results[0].geometry.location);
-            marker.setMap(map);
-            responseDiv.style.display = "block";
-            response.innerText = JSON.stringify(result, null, 2);
-            return results;
-        })
-        .catch((e) => {
-            alert("Geocode was not successful for the following reason: " + e);
-        });
-
-//     infoWindow = new google.maps.InfoWindow();
-//
-//     const locationButton = document.createElement("button");
-//     locationButton.textContent = "Pan to Current Location";
-//     locationButton.classList.add("custom-map-control-button");
-//     map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-//
-//     locationButton.addEventListener("click", () => {
-//         // Try HTML5 geolocation.
-//         if (navigator.geolocation) {
-//             navigator.geolocation.getCurrentPosition(
-//                 (position) => {
-//                     const pos = {
-//                         lat: position.coords.latitude,
-//                         lng: position.coords.longitude,
-//                     };
-//
-//                     map.setCenter(pos);
-//                 },
-//                 () => {
-//                     handleLocationError(true, infoWindow, map.getCenter());
-//                 }
-//             );
-//         } else {
-//             // Browser doesn't support Geolocation
-//             handleLocationError(false, infoWindow, map.getCenter());
-//         }
-//
-//     });
 }
 
 
@@ -157,27 +132,60 @@ window.addEventListener('load', () => {
                 time.textContent = newDate.toLocaleTimeString();
             }
             setInterval(timer, 1000);
-            const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=en&appid=7997b5a3d9701835ffb85f2de130e554`;
+            const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=en&appid=7997b5a3d9701835ffb85f2de130e554`;
             fetch(api)
                 .then(response => {return response.json();})
                 .then(data => {
                     console.log(data);
                     humidity.textContent = `Влажность: ${data.main.humidity} %`;
                     windSpeed.textContent = `Скорость ветра: ${data.wind.speed.toFixed()} м/с`;
-                    degrees.textContent = `${(data.main.temp / 31.3).toFixed()} °`;
+                    degrees.textContent = `${(data.main.temp).toFixed()} °`;
                     cityName.textContent = `${data.name}, ${data.sys.country}`;
-                    weatherDegreesApparent.textContent = `Ощущается как: ${(data.main.feels_like / 31.3).toFixed()} °`;
+                    weatherDegreesApparent.textContent = `Ощущается как: ${(data.main.feels_like).toFixed()} °`;
                     date.textContent = new Date().toDateString();
                     longitude.textContent = `Долгота: ${lon.toFixed(2)}`;
                     latitude.textContent = `Широта: ${lat.toFixed(2)}`;
 
+                    if(`${data.weather[0].description}` === 'sky is clear') {
+                        bigIcon.classList.add('owf');
+                        bigIcon.classList.add('owf-800');
+                        bigIcon.classList.add('owf-2x');
+                    } else if(`${data.weather[0].description}` === 'few clouds') {
+                        bigIcon.classList.add('owf');
+                        bigIcon.classList.add('owf-801');
+                        bigIcon.classList.add('owf-2x');
+                    } else if(`${data.weather[0].description}` === 'scattered clouds') {
+                        bigIcon.classList.add('owf');
+                        bigIcon.classList.add('owf-802');
+                        bigIcon.classList.add('owf-2x');
+                    } else if (`${data.weather[0].description}` === 'broken clouds') {
+                        bigIcon.classList.add('owf');
+                        bigIcon.classList.add('owf-803');
+                        bigIcon.classList.add('owf-2x');
+                    } else if (`${data.weather[0].description}` === 'overcast clouds') {
+                        bigIcon.classList.add('owf');
+                        bigIcon.classList.add('owf-804');
+                        bigIcon.classList.add('owf-2x');}
+
+
+                    smallIcon;
 
                 })
 
         })
     }
-})
+});
 
 
 backgroundChangeBtn.addEventListener('click', changeBackground );
+
 microphone.addEventListener('click', startTalking);
+
+rotatingElem.addEventListener('click', () => {
+        rotatingElem.classList.add('rotating');
+    setTimeout(function () {
+        rotatingElem.classList.remove('rotating');
+    }, 700);
+});
+
+

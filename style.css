@@ -5,9 +5,8 @@
     box-sizing: border-box;
     font-family: 'Lato', sans-serif;
 }
-.degrees-small {
-    font-size: 1.3rem;
-}
+
+
 
 h1 {
     font-size: 4rem;
@@ -18,11 +17,27 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    position: relative;
+    overflow: hidden
+}
+body:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 2;
 }
 
 #wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 3;
+    color: #fff;
+    padding-bottom: 100vh;
 }
 
 #header {
@@ -115,6 +130,10 @@ body {
     padding-right: 0.7vw;
 }
 
+.degrees-small {
+    font-size: 1.3rem;
+}
+
 .weather__today {
     font-size: 10vh;
 }
@@ -160,4 +179,18 @@ body {
     margin-top: 30px;
     padding: 2px;
     color: #4d4d4d;
+}
+
+@keyframes rotation {
+    from{
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    animation-duration: 0.7s;
+    animation-name: rotation;
 }
