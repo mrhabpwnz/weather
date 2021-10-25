@@ -107,7 +107,7 @@ function initMap() {
 
 
 async function changeBackground() {
-    const URL = 'https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&query=nature&client_id=_fVmWccF3rsIJXBUbJWixSCYhGkUjeLTOzBiIkKkosY';
+    const URL = 'https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&query=autumn&client_id=_fVmWccF3rsIJXBUbJWixSCYhGkUjeLTOzBiIkKkosY';
     const response = await fetch(URL);
     const data = await response.json();
 
@@ -147,28 +147,46 @@ window.addEventListener('load', () => {
                     latitude.textContent = `Широта: ${lat.toFixed(2)}`;
 
                     if(`${data.weather[0].description}` === 'sky is clear') {
-                        bigIcon.classList.add('owf');
-                        bigIcon.classList.add('owf-800');
-                        bigIcon.classList.add('owf-2x');
+                        bigIcon.classList.add('owf', 'owf-800', 'owf-2x');
+                        // bigIcon.classList.add('owf-800');
+                        // bigIcon.classList.add('owf-2x');
                     } else if(`${data.weather[0].description}` === 'few clouds') {
-                        bigIcon.classList.add('owf');
-                        bigIcon.classList.add('owf-801');
-                        bigIcon.classList.add('owf-2x');
+                        bigIcon.classList.add('owf', 'owf-801', 'owf-2x');
+                        // bigIcon.classList.add('owf-801');
+                        // bigIcon.classList.add('owf-2x');
                     } else if(`${data.weather[0].description}` === 'scattered clouds') {
-                        bigIcon.classList.add('owf');
-                        bigIcon.classList.add('owf-802');
-                        bigIcon.classList.add('owf-2x');
+                        bigIcon.classList.add('owf', 'owf-802', 'owf-2x');
+                        // bigIcon.classList.add('owf-802');
+                        // bigIcon.classList.add('owf-2x');
                     } else if (`${data.weather[0].description}` === 'broken clouds') {
-                        bigIcon.classList.add('owf');
-                        bigIcon.classList.add('owf-803');
-                        bigIcon.classList.add('owf-2x');
+                        bigIcon.classList.add('owf', 'owf-803', 'owf-2x');
+                        // bigIcon.classList.add('owf-803');
+                        // bigIcon.classList.add('owf-2x');
                     } else if (`${data.weather[0].description}` === 'overcast clouds') {
-                        bigIcon.classList.add('owf');
-                        bigIcon.classList.add('owf-804');
-                        bigIcon.classList.add('owf-2x');}
+                        bigIcon.classList.add('owf', 'owf-804', 'owf-2x');}
+                        // bigIcon.classList.add('owf-804');
+                        // bigIcon.classList.add('owf-2x');}
 
 
-                    smallIcon;
+
+                    let today = new Date()
+                    let dateTomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                    let dateAfterTomorrow = new Date(today.getTime() + (24 * 60 * 60 * 2000));
+                    let dateAfterAfterTomorrow = new Date(today.getTime() + (24 * 60 * 60 * 3000));
+
+                    async function makeForecast() {
+                    let url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=en&cnt=30&appid=7997b5a3d9701835ffb85f2de130e554`;
+                    let resp = await fetch(url);
+                    let data = await resp.json();
+                    console.log(data);
+                    for(let item of data.list) {
+                        console.log(item.dt_txt)
+
+                    }
+                    }
+                    makeForecast();
+
+
 
                 })
 
