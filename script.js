@@ -17,6 +17,7 @@ let lon,
     rotatingElem = document.querySelector('#rotating'),
     smallIcon = document.querySelectorAll('.weather__icon-small'),
     bigIcon = document.querySelector('#degreeSymbol'),
+    allButtons = document.querySelectorAll('.button'),
     map,
     marker,
     geocoder,
@@ -29,7 +30,6 @@ function startTalking() {
     SpeechRecognition.lang = "ru-RU";
     SpeechRecognition.interimResults = true;
     SpeechRecognition.onresult = function(event){
-        console.log(event);
         searchInput.value = event.results[0][0].transcript;
     };
     SpeechRecognition.start();
@@ -132,40 +132,30 @@ window.addEventListener('load', () => {
                 time.textContent = newDate.toLocaleTimeString();
             }
             setInterval(timer, 1000);
-            const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=en&appid=7997b5a3d9701835ffb85f2de130e554`;
+            const api = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&lang=en&appid=7997b5a3d9701835ffb85f2de130e554`;
             fetch(api)
                 .then(response => {return response.json();})
                 .then(data => {
                     console.log(data);
                     humidity.textContent = `Влажность: ${data.main.humidity} %`;
                     windSpeed.textContent = `Скорость ветра: ${data.wind.speed.toFixed()} м/с`;
-                    degrees.textContent = `${(data.main.temp).toFixed()} °`;
+                    degrees.textContent = `${(data.main.temp - 273.15).toFixed()} °`;
                     cityName.textContent = `${data.name}, ${data.sys.country}`;
-                    weatherDegreesApparent.textContent = `Ощущается как: ${(data.main.feels_like).toFixed()} °`;
+                    weatherDegreesApparent.textContent = `Ощущается как: ${(data.main.feels_like - 273.15).toFixed()} °`;
                     date.textContent = new Date().toDateString();
                     longitude.textContent = `Долгота: ${lon.toFixed(2)}`;
                     latitude.textContent = `Широта: ${lat.toFixed(2)}`;
 
                     if(`${data.weather[0].description}` === 'sky is clear') {
                         bigIcon.classList.add('owf', 'owf-800', 'owf-2x');
-                        // bigIcon.classList.add('owf-800');
-                        // bigIcon.classList.add('owf-2x');
                     } else if(`${data.weather[0].description}` === 'few clouds') {
                         bigIcon.classList.add('owf', 'owf-801', 'owf-2x');
-                        // bigIcon.classList.add('owf-801');
-                        // bigIcon.classList.add('owf-2x');
                     } else if(`${data.weather[0].description}` === 'scattered clouds') {
                         bigIcon.classList.add('owf', 'owf-802', 'owf-2x');
-                        // bigIcon.classList.add('owf-802');
-                        // bigIcon.classList.add('owf-2x');
                     } else if (`${data.weather[0].description}` === 'broken clouds') {
                         bigIcon.classList.add('owf', 'owf-803', 'owf-2x');
-                        // bigIcon.classList.add('owf-803');
-                        // bigIcon.classList.add('owf-2x');
                     } else if (`${data.weather[0].description}` === 'overcast clouds') {
                         bigIcon.classList.add('owf', 'owf-804', 'owf-2x');}
-                        // bigIcon.classList.add('owf-804');
-                        // bigIcon.classList.add('owf-2x');}
 
 
 
@@ -182,7 +172,7 @@ window.addEventListener('load', () => {
                     for(let item of data.list) {
                         console.log(item.dt_txt)
 
-                    }
+                         }
                     }
                     makeForecast();
 
@@ -205,5 +195,15 @@ rotatingElem.addEventListener('click', () => {
         rotatingElem.classList.remove('rotating');
     }, 700);
 });
+
+    for(let button of allButtons) {
+        button.addEventListener('click',() => {
+            button.classList.add('buttons_clicked');
+            setTimeout(() => {
+                button.classList.remove('buttons_clicked')
+            }, 500)
+})
+    }
+
 
 

@@ -64,10 +64,18 @@ body:after {
     cursor: pointer;
 }
 .header__search-input {
+    background-color: transparent;
+    border: 2px solid #cccccc;
+    color: #ffffff;
+    transition: .3s linear;
+    font-size: 1.5rem;
+    font-family: Calibri, sans-serif;
+    line-height: 4vh;
+    outline: 0;
     border-right: none;
     border-left: none;
     border-radius: 0;
-    padding-bottom: 1vh;
+    padding: 0.5vw 0.5vw 1vh;
 }
 
 .button_microphone {
@@ -181,6 +189,10 @@ body:after {
     color: #4d4d4d;
 }
 
+.buttons_clicked {
+    background-color: #a47e3c;
+}
+
 @keyframes rotation {
     from{
         transform: rotate(0deg);
@@ -194,3 +206,4 @@ body:after {
     animation-duration: 0.7s;
     animation-name: rotation;
 }
+
