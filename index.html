@@ -13,25 +13,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="owfont-master/css/owfont-regular.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
 </head>
 <body>
-<div class="wrapper" id="wrapper">
+<div class="wrapper">
     <header class="header" id="header">
         <div class="header__buttons-panel">
-            <button id="refreshButton" class="button button_refresh">
+            <button id="refreshButton" class="button button_refresh hover">
                 <i id="rotating" class="fa fa-refresh" aria-hidden="true"></i>
             </button>
-            <button id="en" class="button button_en">EN</button>
-            <button id="ru" class="button button_ru">RU</button>
-            <button id="F" class="button button_F">°F</button>
-            <button id="C" class="button button_C">°C</button>
+            <button id="en" class="button button_en hover">EN</button>
+            <button id="ru" class="button button_ru hover">RU</button>
+            <button id="F" class="button button_F hover">°F</button>
+            <button id="C" class="button button_C hover" >°C</button>
         </div>
         <div class="header__search-panel">
-            <button id="searchButton" class="button button_search">
+            <button id="searchButton" class="button button_search hover">
                 <i class="fa fa-search-plus" aria-hidden="true"></i>
             </button>
             <input type="text" id="searchInput" class=" header__search-input" placeholder="Найти город">
-            <button id="microphoneButton" class="button button_microphone">
+            <button id="microphoneButton" class="button button_microphone hover">
                 <i class="fa fa-microphone" aria-hidden="true"></i>
             </button>
         </div>
@@ -63,36 +64,38 @@
                 </div>
             </div>
             <div id="weather__nextDays" class="weather__nextDays">
-                <div class="weather__tomorrow1">
-                    <h3 id="degrees__day1">Завтра</h3>
-                    <h3 class="degrees degrees-small1">23</h3>
-                    <span class="degrees__symbol-small">C</span>
-                </div>
-                <div class="weather__table weather__table-small">
-                    <div class="weather__small"></div>
-                    <i class="weather__icon-small"></i>
-                </div>
-                <div class="weather__tomorrow2">
-                    <h3 class="degrees__day2">Послезавтра</h3>
-                    <h3 class="degrees degrees-small2">24</h3>
-                    <span class="degrees__symbol-small">C</span>
-                </div>
-                <div class="weather__table weather__table-small">
-                    <div class="weather__small"></div>
-                    <i class="weather__icon-small"></i>
-                </div>
-                <div class="weather__tomorrow3">
-                    <h3 class="degrees__day">После послезавтра</h3>
-                    <h3 class="degrees degrees-small">25</h3>
-                    <span class="degrees__symbol-small">C</span>
-                    <div class="weather__table weather__table-small">
+                <div class="weather__tomorrow-wrapper">
+                    <div class="weather__tomorrow1">
+                        <h3 class="degrees__day"></h3>
+                        <h3 class="degrees degrees-small"></h3>
+                    </div>
+                    <div class="weather__table weather__table-small1">
                         <div class="weather__small"></div>
                         <i class="weather__icon-small"></i>
                     </div>
                 </div>
+                <div class="weather__tomorrow-wrapper">
+                    <div class="weather__tomorrow2">
+                        <h3 class="degrees__day"></h3>
+                        <h3 class="degrees degrees-small"></h3>
+                    </div>
+                    <div class="weather__table weather__table-small2">
+                        <div class="weather__small"></div>
+                        <i class="weather__icon-small"></i>
+                    </div>
+                </div>
+               <div class="weather__tomorrow-wrapper">
+                   <div class="weather__tomorrow3">
+                       <h3 class="degrees__day"></h3>
+                       <h3 class="degrees degrees-small"></h3>
+                   </div>
+                   <div class="weather__table weather__table-small3">
+                       <div class="weather__small"></div>
+                       <i class="weather__icon-small"></i>
+                   </div>
+               </div>
             </div>
         </div>
-
         <div class="map__block">
                 <div id="map"></div>
             <p class="latitude"></p>
@@ -102,8 +105,7 @@
 </div>
 <script src="script.js"></script>
 <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly"
-        async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly"
 ></script>
 </body>
 </html>

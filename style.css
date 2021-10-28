@@ -6,8 +6,6 @@
     font-family: 'Lato', sans-serif;
 }
 
-
-
 h1 {
     font-size: 4rem;
 }
@@ -31,7 +29,8 @@ body:after {
     z-index: 2;
 }
 
-#wrapper {
+
+.wrapper {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -59,7 +58,7 @@ body:after {
     outline: 0;
 }
 
-.button:not(.header__search-input):hover {
+.hover:hover {
     background-color: #4a7562;
     cursor: pointer;
 }
@@ -127,6 +126,15 @@ body:after {
 
 .weather__table {
     margin: 0.5vw 2vw;
+
+}
+
+.weather__table-small1,
+.weather__table-small2,
+.weather__table-small3 {
+    position: absolute;
+    left: 13.5vw;
+    top: -0.5vh;
 }
 
 .weather__nextDays {
@@ -134,12 +142,23 @@ body:after {
     margin-top: 7vh;
 }
 
+.weather__tomorrow-wrapper {
+    display: flex;
+    border: 2px solid #cccccc;
+    border-radius: 5px;
+    margin: 0 1vw 0 1.8vw;
+    position: relative;
+    width: 20vw;
+}
+
 .degrees__day {
-    padding-right: 0.7vw;
+    padding: 1vh 0 1vh 0;
 }
 
 .degrees-small {
     font-size: 1.3rem;
+    padding: 0.7vh 1vw 1vh 1vw;
+    margin-left: -0.8vw;
 }
 
 .weather__today {
@@ -150,7 +169,6 @@ body:after {
 .weather__time {
     font-size: 2vw;
 }
-
 
 .weather__today {
     display: flex;
@@ -165,13 +183,9 @@ body:after {
 .weather__tomorrow2,
 .weather__tomorrow3 {
     margin: 0.5vw 2vw;
-}
-
-.weather__tomorrow1,
-.weather__tomorrow2,
-.weather__tomorrow3 {
     display: flex;
 }
+
 
 #map {
     height: 50vh;
@@ -191,6 +205,7 @@ body:after {
 
 .buttons_clicked {
     background-color: #a47e3c;
+    cursor: pointer;
 }
 
 @keyframes rotation {
