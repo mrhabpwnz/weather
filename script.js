@@ -26,6 +26,9 @@ let lon,
     changeLangButtonRU = document.querySelector('#ru'),
     changeDegreesC = document.querySelector('#C'),
     changeDegreesF = document.querySelector('#F'),
+    controller = new AbortController(),
+    signal = controller.signal,
+    scriptList = document.getElementsByTagName('script'),
     map,
     marker,
     geocoder,
@@ -108,7 +111,7 @@ if(navigator.geolocation) {
         }
         setInterval(timer, 1000);
 
-        const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lon}&lang=ru&days=4`;
+        const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lon}&lang=ru&days=3`;
         fetch(api)
             .then(response => {return response.json();})
             .then(data => {
@@ -124,7 +127,7 @@ if(navigator.geolocation) {
 
 
                 for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                    forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
+                    forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
                     forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                 }
 
@@ -251,10 +254,17 @@ changeLangButtonEN.addEventListener('click',  () => {
 
 
 
+                for(let i = 0; i < scriptList.length; i++) {
+                    if (scriptList[i].outerHTML.includes('maps' )) {
+                        scriptList[i].remove();
+                        console.log(scriptList);
+
+                    }
+                }
+
                 let newScript = document.createElement('script');
                 newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
                 document.body.appendChild(newScript);
-
             }
 
     })
@@ -264,7 +274,8 @@ changeLangButtonRU.addEventListener('click',() => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
+        let url = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
+        let resp = await fetch(url);
         let data = await resp.json();
         if (weatherDegreesApparent.textContent.includes('Feels like')) {
             date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
@@ -278,25 +289,22 @@ changeLangButtonRU.addEventListener('click',() => {
                 forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
             }
 
-            let newScript = document.createElement('script');
-            newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
-            document.body.appendChild(newScript);
-
-            let scriptList = document.getElementsByTagName('script');
             for(let i = 0; i < scriptList.length; i++) {
-                if(scriptList[i].outerHTML.includes('https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&amp;language=ru&amp;callback=initMap&amp;v=weekly' || 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&amp;language=en&amp;callback=initMap&amp;v=weekly')) {
-                    document.body.removeChild(newScript)
+                if (scriptList[i].outerHTML.includes('maps' )) {
+                    scriptList[i].remove();
+                    console.log(scriptList);
+
                 }
             }
 
-
-
-        }
-
+            let newScript = document.createElement('script');
+            newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
+            document.body.appendChild(newScript);
+}
     })
-} )
-let scriptList = document.getElementsByTagName('script');
-console.log(scriptList)
+})
+
+
 changeDegreesC.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
