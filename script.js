@@ -28,6 +28,7 @@ let lon,
     degreesF = document.querySelector('#F'),
     inputText = document.querySelector('#searchInput'),
     submitButton = document.querySelector('#searchButton'),
+    scriptList = document.getElementsByTagName('script'),
     map,
     marker,
     geocoder,
@@ -115,15 +116,58 @@ function initMap() {
         });
         // Configure the click listener.
         map.addListener("click", (mapsMouseEvent) => {
-                console.log(mapsMouseEvent.latLng.toJSON());
-            [lat, lng] = [mapsMouseEvent.latLng.toJSON()];
+        console.log(mapsMouseEvent.latLng.toJSON());
+            lat = mapsMouseEvent.latLng.lat();
+            lng = mapsMouseEvent.latLng.lng();
+            const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+            fetch(api)
+                .then(response => {return response.json();})
+                .then(data => {
+                    console.log(data);
+                    humidity.textContent = `Влажность: ${data.current.humidity} %`;
+                    windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
+                    degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
+                    cityName.textContent = `${data.location.name}, ${data.location.country}`;
+                    weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
+                    date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
+                    latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
+                    lonUnderMap.textContent = `Долгота: ${lng.toFixed(2)}`;
+
+
+                    for (let i = 0; i < data.forecast.forecastday.length; i++) {
+                        forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
+                        forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
+                    }
+
+                    const classnamesToWeathermap = {
+                        'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
+                        'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
+                        'owf-802': ['Scattered clouds', 'Пасмурно'],
+                        'owf-803': ['Broken clouds'],
+                        'owf-804': ['Overcast clouds'],
+                        'owf-501': ['Moderate rain', 'Местами дождь'],
+                        'owf-903': ['Patchy rain possible', 'Слабая морось'],
+                        'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
+                        'owf-600': ['Light snow', 'Мелкий снег'],
+                        'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
+                    }
+
+                    for(let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
+                        if(weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
+                        for( let i = 0; i < data.forecast.forecastday.length; i++) {
+                            if(weatherArray.includes(data.forecast.forecastday[i].day.condition.text))
+                                weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
+                        }
+                    }
+                })
+
 
         })
 
-                function timer() {
-                    time.textContent = new Date().toLocaleTimeString();
-                }
-                setInterval(timer, 1000);
+                // function timer() {
+                //     time.textContent = new Date().toLocaleTimeString();
+                // }
+                // setInterval(timer, 1000);
 
                 const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
                 fetch(api)
@@ -229,16 +273,15 @@ langButtonEN.addEventListener('click',  () => {
                 for(let i = 0; i < scriptList.length; i++) {
                     if (scriptList[i].outerHTML.includes('maps' )) {
                         scriptList[i].remove();
-                        console.log(scriptList);
-
+                        let newScript = document.createElement('script');
+                        newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
+                        document.body.appendChild(newScript);
                     }
                 }
 
-                let newScript = document.createElement('script');
-                newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
-                document.body.appendChild(newScript);
+
             }
-            debugger
+
     })
 })
 
@@ -266,12 +309,13 @@ langButtonRU.addEventListener('click',() => {
                     scriptList[i].remove();
                     console.log(scriptList);
 
+                    let newScript = document.createElement('script');
+                    newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
+                    document.body.appendChild(newScript);
                 }
             }
 
-            let newScript = document.createElement('script');
-            newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
-            document.body.appendChild(newScript);
+
 }
     })
 })
