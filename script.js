@@ -22,12 +22,12 @@ let lon,
     forecastDegreesSmall = document.querySelectorAll('.degrees-small'),
     daysEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
     daysRU = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота','Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-    changeLangButtonEN = document.querySelector('#en'),
-    changeLangButtonRU = document.querySelector('#ru'),
-    changeDegreesC = document.querySelector('#C'),
-    changeDegreesF = document.querySelector('#F'),
-    controller = new AbortController(),
-    signal = controller.signal,
+    langButtonEN = document.querySelector('#en'),
+    langButtonRU = document.querySelector('#ru'),
+    degreesC = document.querySelector('#C'),
+    degreesF = document.querySelector('#F'),
+    inputText = document.querySelector('#searchInput'),
+    submitButton = document.querySelector('#searchButton'),
     scriptList = document.getElementsByTagName('script'),
     map,
     marker,
@@ -35,11 +35,24 @@ let lon,
     responseDiv,
     response;
 
+async function changeBackground() {
+    const URL = 'https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&query=autumn&client_id=_fVmWccF3rsIJXBUbJWixSCYhGkUjeLTOzBiIkKkosY';
+    const response = await fetch(URL);
+    const data = await response.json();
+
+    if (!document.body.style.backgroundImage) return document.body.style.backgroundImage = `url(${data.urls.full})`;
+
+    const oldBackground = document.body.style.backgroundImage.split(',')[0];
+
+    document.body.style.backgroundImage = `url(${data.urls.full}), ${oldBackground}`;
+}
+changeBackground();
 
 function initMap() {
     navigator.geolocation.getCurrentPosition(position => {
         let lat = position.coords.latitude;
         let lng = position.coords.longitude;
+        let myLatlng = { lat: lat, lng: lng };
 
         map = new google.maps.Map(document.getElementById("map"), {
             zoom: 10,
@@ -49,8 +62,7 @@ function initMap() {
         });
         geocoder = new google.maps.Geocoder();
 
-        const inputText = document.querySelector('#searchInput');
-        const submitButton = document.querySelector('#searchButton');
+
         response = document.createElement("pre");
         response.id = "response";
         response.innerText = "";
@@ -59,7 +71,7 @@ function initMap() {
         responseDiv.appendChild(response);
 
 
-        // map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
+
         marker = new google.maps.Marker({
             map,
         });
@@ -67,10 +79,12 @@ function initMap() {
             geocode({ location: e.latLng });
         });
         submitButton.addEventListener("click", () =>
-            geocode({ address: inputText.value })
+            geocode({ address: inputText.value }),
         );
         inputText.addEventListener("keypress", (e) => {
-                if(e.key === 'Enter') {geocode({ address: inputText.value })}
+                if(e.key === 'Enter') { geocode({ address: inputText.value });
+                    changeBackground();
+                }
             }
         );
         function clear() {
@@ -90,96 +104,74 @@ function initMap() {
                     marker.setMap(map);
                     responseDiv.style.display = "block";
                     response.innerText = JSON.stringify(result, null, 2);
-                    setTimeout(() => {
-
-                    })
                     return results;
                 })
                 .catch((e) => {
                     alert("Geocode was not successful for the following reason: " + e);
                 });
         }
-    })}
 
-if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(position => {
-        lon = position.coords.longitude;
-        lat = position.coords.latitude;
+        let infoWindow = new google.maps.InfoWindow({
+            position: myLatlng,
+        });
+        // Configure the click listener.
+        map.addListener("click", (mapsMouseEvent) => {
+                console.log(mapsMouseEvent.latLng.toJSON());
+            [lat, lng] = [mapsMouseEvent.latLng.toJSON()];
 
-        function timer() {
-            time.textContent = new Date().toLocaleTimeString();
-        }
-        setInterval(timer, 1000);
+        })
 
-        const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lon}&lang=ru&days=3`;
-        fetch(api)
-            .then(response => {return response.json();})
-            .then(data => {
-                console.log(data);
-                humidity.textContent = `Влажность: ${data.current.humidity} %`;
-                windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
-                degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
-                cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
-                date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
-                latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
-                lonUnderMap.textContent = `Долгота: ${lon.toFixed(2)}`;
-
-
-                for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                    forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
-                    forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
+                function timer() {
+                    time.textContent = new Date().toLocaleTimeString();
                 }
+                setInterval(timer, 1000);
 
-                if(`${data.current.condition.text}` === 'Cloudy' || 'Partly cloudy' || 'Overcast' || 'Переменная облачность' || 'Облачно') {
-                    bigIcon.classList.add('owf', 'owf-801', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Sunny' || 'Clear' || 'Солнечно' || 'Ясно') {
-                    bigIcon.classList.add('owf', 'owf-800', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Scattered clouds' || 'Пасмурно') {
-                    bigIcon.classList.add('owf', 'owf-802', 'owf-2x');
-                } else if (`${data.current.condition.text}` === 'Broken clouds') {
-                    bigIcon.classList.add('owf', 'owf-803', 'owf-2x');
-                } else if (`${data.current.condition.text}` === 'Overcast clouds') {
-                    bigIcon.classList.add('owf', 'owf-804', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Moderate rain' || 'Местами дождь') {
-                    bigIcon.classList.add('owf', 'owf-501', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Patchy rain possible' || 'Слабая морось'){
-                    bigIcon.classList.add('owf', 'owf-903', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Light snow'){
-                    bigIcon.classList.add('owf', 'owf-600', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Mist' || 'Fog' || 'Freezing fog'){
-                    bigIcon.classList.add('owf', 'owf-741', 'owf-2x');
-                } else if(`${data.current.condition.text}` === 'Heavy rain' || 'Heavy rain at times') {
-                    bigIcon.classList.add('owf', 'owf-503', 'owf-2x');
-                }
+                const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+                fetch(api)
+                    .then(response => {return response.json();})
+                    .then(data => {
+                        console.log(data);
+                        humidity.textContent = `Влажность: ${data.current.humidity} %`;
+                        windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
+                        degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
+                        cityName.textContent = `${data.location.name}, ${data.location.country}`;
+                        weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
+                        date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
+                        latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
+                        lonUnderMap.textContent = `Долгота: ${lng.toFixed(2)}`;
 
-                for(let i = 0; i < data.forecast.forecastday.length; i++) {
-                    if(data.forecast.forecastday[i].day.condition.text === 'Sunny' || 'Clear' || 'Солнечно' || 'Ясно') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-800', 'owf-3x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Cloudy' || 'Partly cloudy' || 'Overcast' || 'Переменная облачность' || 'Облачно') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-801', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Broken clouds') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-803', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Scattered clouds' || 'Пасмурно') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-802', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Overcast clouds') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-804', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Moderate rain' || 'Местами дождь') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-501', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Patchy rain possible' || 'Слабая морось') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-903', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Light snow') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-600', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Mist' || 'Fog' || 'Freezing fog' || 'Дымка' || 'Туман') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-741', 'owf-2x');
-                    } else if(data.forecast.forecastday[i].day.condition.text === 'Heavy rain || Heavy rain at times') {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-503', 'owf-2x');
-                    } else {
-                        weatherSmallIcon[i].classList.add('owf', 'owf-801', 'owf-2x');
-                    }
-                }
+
+                        for (let i = 0; i < data.forecast.forecastday.length; i++) {
+                            forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
+                            forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
+                        }
+
+                        const classnamesToWeathermap = {
+                            'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
+                            'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
+                            'owf-802': ['Scattered clouds', 'Пасмурно'],
+                            'owf-803': ['Broken clouds'],
+                            'owf-804': ['Overcast clouds'],
+                            'owf-501': ['Moderate rain', 'Местами дождь'],
+                            'owf-903': ['Patchy rain possible', 'Слабая морось'],
+                            'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
+                            'owf-600': ['Light snow', 'Мелкий снег'],
+                            'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
+                        }
+
+                        for(let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
+                            if(weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
+                            for( let i = 0; i < data.forecast.forecastday.length; i++) {
+                                if(weatherArray.includes(data.forecast.forecastday[i].day.condition.text))
+                                    weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
+                            }
+                        }
+                    })
             })
-    })
+
+    }
+
+
 
 
 function startTalking() {
@@ -192,20 +184,6 @@ function startTalking() {
     SpeechRecognition.start();
 
 }
-
-async function changeBackground() {
-    const URL = 'https://api.unsplash.com/photos/random?orientation=landscape&per_page=1&query=autumn&client_id=_fVmWccF3rsIJXBUbJWixSCYhGkUjeLTOzBiIkKkosY';
-    const response = await fetch(URL);
-    const data = await response.json();
-
-    if (!document.body.style.backgroundImage) return document.body.style.backgroundImage = `url(${data.urls.full})`;
-
-    const oldBackground = document.body.style.backgroundImage.split(',')[0];
-
-    document.body.style.backgroundImage = `url(${data.urls.full}), ${oldBackground}`;
-}
-changeBackground();
-
 
 
 
@@ -232,9 +210,9 @@ rotatingElem.addEventListener('click', () => {
                 button.classList.add('hover')
             }, 1000);
 })
-    }}
+    }
 
-changeLangButtonEN.addEventListener('click',  () => {
+langButtonEN.addEventListener('click',  () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
@@ -270,7 +248,7 @@ changeLangButtonEN.addEventListener('click',  () => {
     })
 })
 
-changeLangButtonRU.addEventListener('click',() => {
+langButtonRU.addEventListener('click',() => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
@@ -305,7 +283,7 @@ changeLangButtonRU.addEventListener('click',() => {
 })
 
 
-changeDegreesC.addEventListener('click', () => {
+degreesC.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
@@ -328,7 +306,7 @@ changeDegreesC.addEventListener('click', () => {
     })
 })
 
-changeDegreesF.addEventListener('click', () => {
+degreesF.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
