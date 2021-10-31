@@ -126,7 +126,7 @@ function initMap() {
                 }
                 setInterval(timer, 1000);
 
-                const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
                     .then(data => {
@@ -216,7 +216,7 @@ langButtonEN.addEventListener('click',  () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-            let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=4`);
+            let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=4`);
             let data = await resp.json();
             if (weatherDegreesApparent.textContent.includes('Ощущается как')) {
                 date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toDateString()}`
@@ -252,7 +252,7 @@ langButtonRU.addEventListener('click',() => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let url = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
+        let url = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
         let resp = await fetch(url);
         let data = await resp.json();
         if (weatherDegreesApparent.textContent.includes('Feels like')) {
@@ -287,7 +287,7 @@ degreesC.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
+        let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
         let data = await resp.json();
         if (degrees.textContent.includes('F') && weatherDegreesApparent.textContent.includes('Ощущается как')) {
             degrees.textContent = `${Math.round(data.current.temp_c)}° C`;
@@ -310,7 +310,7 @@ degreesF.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
+        let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
         let data = await resp.json();
         if (degrees.textContent.includes('C') && weatherDegreesApparent.textContent.includes('Ощущается как')) {
             degrees.textContent = `${Math.round(data.current.temp_f.toFixed())}° F`;
