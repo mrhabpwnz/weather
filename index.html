@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="owfont-master/css/owfont-regular.css">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<!--    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>-->
 
 </head>
 <body>
@@ -98,15 +98,17 @@
         </div>
         <div class="map__block">
                 <div id="map"></div>
-            <p class="latitude"></p>
-            <p class="longitude"></p>
+            <div class="map__coords">
+                <p class="latitude"></p>
+                <p class="longitude"></p>
+            </div>
+
         </div>
     </main>
 </div>
 <script src="script.js"></script>
 <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly"
-        id="mapsMain"
 ></script>
 </body>
 </html>

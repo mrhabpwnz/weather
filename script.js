@@ -28,7 +28,7 @@ let lon,
     degreesF = document.querySelector('#F'),
     inputText = document.querySelector('#searchInput'),
     submitButton = document.querySelector('#searchButton'),
-    scriptList = document.getElementsByTagName('script'),
+    // scriptList = document.getElementsByTagName('script'),
     map,
     marker,
     geocoder,
@@ -119,7 +119,7 @@ function initMap() {
         console.log(mapsMouseEvent.latLng.toJSON());
             lat = mapsMouseEvent.latLng.lat();
             lng = mapsMouseEvent.latLng.lng();
-            const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+            const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
             fetch(api)
                 .then(response => {return response.json();})
                 .then(data => {
@@ -164,12 +164,12 @@ function initMap() {
 
         })
 
-                // function timer() {
-                //     time.textContent = new Date().toLocaleTimeString();
-                // }
-                // setInterval(timer, 1000);
+                function timer() {
+                    time.textContent = new Date().toLocaleTimeString();
+                }
+                setInterval(timer, 1000);
 
-                const api = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
                     .then(data => {
@@ -256,7 +256,7 @@ langButtonEN.addEventListener('click',  () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-            let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=4`);
+            let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=4`);
             let data = await resp.json();
             if (weatherDegreesApparent.textContent.includes('Ощущается как')) {
                 date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toDateString()}`
@@ -269,17 +269,15 @@ langButtonEN.addEventListener('click',  () => {
                     forecastDaySmall[i].textContent = `${daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
                 }
                 searchInput.placeholder = 'Search city';
-
-                for(let i = 0; i < scriptList.length; i++) {
-                    if (scriptList[i].outerHTML.includes('maps' )) {
-                        scriptList[i].remove();
-                        let newScript = document.createElement('script');
-                        newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
-                        document.body.appendChild(newScript);
-                    }
-                }
-
-
+                //
+                // for(let i = 0; i < scriptList.length; i++) {
+                //     if (scriptList[i].outerHTML.includes('maps' )) {
+                //         scriptList[i].remove();
+                //         let newScript = document.createElement('script');
+                //         newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
+                //         document.body.appendChild(newScript);
+                //     }
+                // }
             }
 
     })
@@ -289,7 +287,7 @@ langButtonRU.addEventListener('click',() => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let url = `http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
+        let url = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
         let resp = await fetch(url);
         let data = await resp.json();
         if (weatherDegreesApparent.textContent.includes('Feels like')) {
@@ -304,16 +302,16 @@ langButtonRU.addEventListener('click',() => {
                 forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
             }
 
-            for(let i = 0; i < scriptList.length; i++) {
-                if (scriptList[i].outerHTML.includes('maps' )) {
-                    scriptList[i].remove();
-                    console.log(scriptList);
+            // for(let i = 0; i < scriptList.length; i++) {
+            //     if (scriptList[i].outerHTML.includes('maps' )) {
+            //         scriptList[i].remove();
+            //         console.log(scriptList);
 
-                    let newScript = document.createElement('script');
-                    newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
-                    document.body.appendChild(newScript);
-                }
-            }
+                    // let newScript = document.createElement('script');
+                    // newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
+                    // document.body.appendChild(newScript);
+                // }
+            // }
 
 
 }
@@ -348,7 +346,7 @@ degreesF.addEventListener('click', () => {
     navigator.geolocation.getCurrentPosition(async position => {
         lon = position.coords.longitude;
         lat = position.coords.latitude;
-        let resp = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
+        let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`);
         let data = await resp.json();
         if (degrees.textContent.includes('C') && weatherDegreesApparent.textContent.includes('Ощущается как')) {
             degrees.textContent = `${Math.round(data.current.temp_f.toFixed())}° F`;
