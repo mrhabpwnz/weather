@@ -22,7 +22,7 @@ let lon,
     forecastDegreesSmall = document.querySelectorAll('.degrees-small'),
     daysEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
     daysRU = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота','Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-    langChangeBtn = document.querySelectorAll('.lang-buttons'),
+    langChangeBtn = document.querySelectorAll('.lang-buttonsEN'),
     degreesC = document.querySelector('#C'),
     degreesF = document.querySelector('#F'),
     inputText = document.querySelector('#searchInput'),
@@ -225,18 +225,18 @@ function initMap() {
                     .then(response => {return response.json();})
                     .then(data => {
 debugger
-                        humidity.textContent = (langChangeBtn.textContent === 'ru' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
-                        windSpeed.textContent = (langChangeBtn.textContent === 'ru' ? 'Скорость ветра:' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChangeBtn.textContent === 'ru' ? ' км/ч' : ' km/h');
+                        humidity.textContent = (langChangeBtn.textContent === 'RU' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
+                        windSpeed.textContent = (langChangeBtn.textContent === 'RU' ? 'Скорость ветра:' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChangeBtn.textContent === 'ru' ? ' км/ч' : ' km/h');
                         degrees.textContent = data.current.temp_c.toFixed() + '° C';
                         cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                        weatherDegreesApparent.textContent = (langChangeBtn.textContent === 'ru' ? 'Ощущается как: ' : 'Feels like: ' ) + data.current.feelslike_c.toFixed() + '° C';
-                        date.textContent = (langChangeBtn.textContent === 'ru' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}));
-                        latUnderMap.textContent = (langChangeBtn.textContent === 'ru' ? 'Широта: ' : 'Latitide: ' + lat.toFixed(2));
-                        lonUnderMap.textContent = (langChangeBtn.textContent === 'ru' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
+                        weatherDegreesApparent.textContent = (langChangeBtn.textContent === 'RU' ? 'Ощущается как: ' : 'Feels like: ' ) + data.current.feelslike_c.toFixed() + '° C';
+                        date.textContent = (langChangeBtn.textContent === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}));
+                        latUnderMap.textContent = (langChangeBtn.textContent === 'RU' ? 'Широта: ' : 'Latitide: ' + lat.toFixed(2));
+                        lonUnderMap.textContent = (langChangeBtn.textContent === 'RU' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
 
 
                         for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                            forecastDaySmall[i].textContent = (langChangeBtn.textContent === 'ru' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]);
+                            forecastDaySmall[i].textContent = (langChangeBtn.textContent === 'RU' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]);
                             forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                         }
 
@@ -248,7 +248,7 @@ debugger
                             }
                         }
 
-                        langChangeBtn.textContent === 'ru' ? setAPILanguage('ru') : setAPILanguage('en');
+                        langChangeBtn.textContent === 'RU' ? setAPILanguage('ru') : setAPILanguage('en');
 
                     })
             })
