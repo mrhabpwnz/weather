@@ -22,13 +22,13 @@ let lon,
     forecastDegreesSmall = document.querySelectorAll('.degrees-small'),
     daysEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
     daysRU = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота','Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-    langButtonEN = document.querySelector('#en'),
-    langButtonRU = document.querySelector('#ru'),
+    langChangeBtn = document.querySelectorAll('.lang-buttons'),
     degreesC = document.querySelector('#C'),
     degreesF = document.querySelector('#F'),
     inputText = document.querySelector('#searchInput'),
     submitButton = document.querySelector('#searchButton'),
     // scriptList = document.getElementsByTagName('script'),
+    // langChanger = document.querySelector('.lang-menu'),
     map,
     marker,
     geocoder,
@@ -48,6 +48,45 @@ async function changeBackground() {
 }
 changeBackground();
 
+const setAPILanguage = (lang) => {
+
+    document.querySelectorAll('script[src^="https://maps.googleapis.com"]').forEach(script => {
+        script.remove();
+    });
+    if(google) delete google.maps;
+
+    let newAPI = document.createElement('script');
+    newAPI.src = 'https://maps.googleapis.com/maps/api/js?' + '&key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw' + '&language=' + lang + '&callback=initMap&v=weekly';
+
+    window.googleMapsAPILoaded = () => {
+        let event = new CustomEvent('googleMapsAPILoaded');
+        window.dispatchEvent(event);
+    }
+
+    let apiLoaded = new Promise(resolve => {
+        window.addEventListener('googleMapsAPILoaded', () => {
+            resolve();
+        });
+    });
+
+    document.querySelector('head').appendChild(newAPI);
+
+    return apiLoaded;
+}
+
+const classnamesToWeathermap = {
+    'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
+    'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
+    'owf-802': ['Scattered clouds', 'Пасмурно'],
+    'owf-803': ['Broken clouds'],
+    'owf-804': ['Overcast clouds'],
+    'owf-501': ['Moderate rain', 'Местами дождь'],
+    'owf-903': ['Patchy rain possible', 'Слабая морось'],
+    'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
+    'owf-600': ['Light snow', 'Мелкий снег'],
+    'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
+}
+
 function initMap() {
     navigator.geolocation.getCurrentPosition(position => {
         let lat = position.coords.latitude;
@@ -61,16 +100,12 @@ function initMap() {
             mapTypeId: "roadmap",
         });
         geocoder = new google.maps.Geocoder();
-
-
         response = document.createElement("pre");
         response.id = "response";
         response.innerText = "";
         responseDiv = document.createElement("div");
         responseDiv.id = "response-container";
         responseDiv.appendChild(response);
-
-
 
         marker = new google.maps.Marker({
             map,
@@ -123,7 +158,6 @@ function initMap() {
             fetch(api)
                 .then(response => {return response.json();})
                 .then(data => {
-                    console.log(data);
                     humidity.textContent = `Влажность: ${data.current.humidity} %`;
                     windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
                     degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
@@ -139,19 +173,6 @@ function initMap() {
                         forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                     }
 
-                    const classnamesToWeathermap = {
-                        'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
-                        'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
-                        'owf-802': ['Scattered clouds', 'Пасмурно'],
-                        'owf-803': ['Broken clouds'],
-                        'owf-804': ['Overcast clouds'],
-                        'owf-501': ['Moderate rain', 'Местами дождь'],
-                        'owf-903': ['Patchy rain possible', 'Слабая морось'],
-                        'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
-                        'owf-600': ['Light snow', 'Мелкий снег'],
-                        'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
-                    }
-
                     for(let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
                         if(weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
                         for( let i = 0; i < data.forecast.forecastday.length; i++) {
@@ -159,15 +180,14 @@ function initMap() {
                                 weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
                         }
                     }
+                    changeBackground();
                 })
-
-
         } else if(windSpeed.textContent.includes('Wind speed')) {
                 const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=en&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
                     .then(data => {
-                        console.log(data);
+
                         humidity.textContent = `Humidity: ${data.current.humidity} %`;
                         windSpeed.textContent = `Wind speed: ${data.current.wind_kph.toFixed()} км/ч`;
                         degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
@@ -183,19 +203,6 @@ function initMap() {
                             forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                         }
 
-                        const classnamesToWeathermap = {
-                            'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
-                            'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
-                            'owf-802': ['Scattered clouds', 'Пасмурно'],
-                            'owf-803': ['Broken clouds'],
-                            'owf-804': ['Overcast clouds'],
-                            'owf-501': ['Moderate rain', 'Местами дождь'],
-                            'owf-903': ['Patchy rain possible', 'Слабая морось'],
-                            'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
-                            'owf-600': ['Light snow', 'Мелкий снег'],
-                            'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
-                        }
-
                         for(let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
                             if(weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
                             for( let i = 0; i < data.forecast.forecastday.length; i++) {
@@ -203,50 +210,34 @@ function initMap() {
                                     weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
                             }
                         }
+                        changeBackground();
                     })
             }
-
-
         })
-
-
 
                 function timer() {
                     time.textContent = new Date().toLocaleTimeString();
                 }
                 setInterval(timer, 1000);
 
-                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
+                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
                     .then(data => {
-                        console.log(data);
-                        humidity.textContent = `Влажность: ${data.current.humidity} %`;
-                        windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
-                        degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
+debugger
+                        humidity.textContent = (langChangeBtn.textContent === 'ru' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
+                        windSpeed.textContent = (langChangeBtn.textContent === 'ru' ? 'Скорость ветра:' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChangeBtn.textContent === 'ru' ? ' км/ч' : ' km/h');
+                        degrees.textContent = data.current.temp_c.toFixed() + '° C';
                         cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                        weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
-                        date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
-                        latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
-                        lonUnderMap.textContent = `Долгота: ${lng.toFixed(2)}`;
+                        weatherDegreesApparent.textContent = (langChangeBtn.textContent === 'ru' ? 'Ощущается как: ' : 'Feels like: ' ) + data.current.feelslike_c.toFixed() + '° C';
+                        date.textContent = (langChangeBtn.textContent === 'ru' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}));
+                        latUnderMap.textContent = (langChangeBtn.textContent === 'ru' ? 'Широта: ' : 'Latitide: ' + lat.toFixed(2));
+                        lonUnderMap.textContent = (langChangeBtn.textContent === 'ru' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
 
 
                         for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                            forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
+                            forecastDaySmall[i].textContent = (langChangeBtn.textContent === 'ru' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]);
                             forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
-                        }
-
-                        const classnamesToWeathermap = {
-                            'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
-                            'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
-                            'owf-802': ['Scattered clouds', 'Пасмурно'],
-                            'owf-803': ['Broken clouds'],
-                            'owf-804': ['Overcast clouds'],
-                            'owf-501': ['Moderate rain', 'Местами дождь'],
-                            'owf-903': ['Patchy rain possible', 'Слабая морось'],
-                            'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
-                            'owf-600': ['Light snow', 'Мелкий снег'],
-                            'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
                         }
 
                         for(let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
@@ -256,9 +247,11 @@ function initMap() {
                                     weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
                             }
                         }
+
+                        langChangeBtn.textContent === 'ru' ? setAPILanguage('ru') : setAPILanguage('en');
+
                     })
             })
-
     }
 
 function startTalking() {
@@ -271,9 +264,6 @@ function startTalking() {
     SpeechRecognition.start();
 
 }
-
-
-
 
 backgroundChangeBtn.addEventListener('click', changeBackground );
 
@@ -299,71 +289,52 @@ rotatingElem.addEventListener('click', () => {
 })
     }
 
-langButtonEN.addEventListener('click',  () => {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        lon = position.coords.longitude;
-        lat = position.coords.latitude;
-            let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=4`);
-            let data = await resp.json();
-            if (weatherDegreesApparent.textContent.includes('Ощущается как')) {
-                date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toDateString()}`
-                humidity.textContent = `Humidity: ${data.current.humidity} %`;
-                windSpeed.textContent = `Wind speed: ${data.current.wind_kph.toFixed()} km/h`;
-                weatherDegreesApparent.textContent = `Feels like: ${(data.current.feelslike_c.toFixed())}° C`;
-                latUnderMap.textContent = `Latitude: ${lat.toFixed(2)}`;
-                lonUnderMap.textContent = `Longitude: ${lon.toFixed(2)}`;
-                for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                    forecastDaySmall[i].textContent = `${daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
-                }
-                searchInput.placeholder = 'Search city';
-                //
-                // for(let i = 0; i < scriptList.length; i++) {
-                //     if (scriptList[i].outerHTML.includes('maps' )) {
-                //         scriptList[i].remove();
-                //         let newScript = document.createElement('script');
-                //         newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=en&callback=initMap&v=weekly';
-                //         document.body.appendChild(newScript);
-                //     }
-                // }
-            }
-
-    })
-})
-
-langButtonRU.addEventListener('click',() => {
-    navigator.geolocation.getCurrentPosition(async position => {
-        lon = position.coords.longitude;
-        lat = position.coords.latitude;
-        let url = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
-        let resp = await fetch(url);
-        let data = await resp.json();
-        if (weatherDegreesApparent.textContent.includes('Feels like')) {
-            date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
-            humidity.textContent = `Влажность: ${data.current.humidity} %`;
-            windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
-            weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
-            latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
-            lonUnderMap.textContent = `Долгота: ${lon.toFixed(2)}`;
-            searchInput.placeholder = 'Найти город';
-            for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
-            }
-
-            // for(let i = 0; i < scriptList.length; i++) {
-            //     if (scriptList[i].outerHTML.includes('maps' )) {
-            //         scriptList[i].remove();
-            //         console.log(scriptList);
-
-                    // let newScript = document.createElement('script');
-                    // newScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw&language=ru&callback=initMap&v=weekly';
-                    // document.body.appendChild(newScript);
-                // }
-            // }
-
-
-}
-    })
-})
+// langButtonEN.addEventListener('click',  () => {
+//     navigator.geolocation.getCurrentPosition(async (position) => {
+//         lon = position.coords.longitude;
+//         lat = position.coords.latitude;
+//             let resp = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=en&q=${lat},${lon}&days=3`);
+//             let data = await resp.json();
+//             if (weatherDegreesApparent.textContent.includes('Ощущается как')) {
+//                 date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toDateString()}`
+//                 humidity.textContent = `Humidity: ${data.current.humidity} %`;
+//                 windSpeed.textContent = `Wind speed: ${data.current.wind_kph.toFixed()} km/h`;
+//                 weatherDegreesApparent.textContent = `Feels like: ${(data.current.feelslike_c.toFixed())}° C`;
+//                 latUnderMap.textContent = `Latitude: ${lat.toFixed(2)}`;
+//                 lonUnderMap.textContent = `Longitude: ${lon.toFixed(2)}`;
+//                 for (let i = 0; i < data.forecast.forecastday.length; i++) {
+//                     forecastDaySmall[i].textContent = `${daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
+//                 }
+//                 searchInput.placeholder = 'Search city';
+//
+//                 setAPILanguage('en');
+//             }
+//     })
+// })
+//
+// langButtonRU.addEventListener('click',() => {
+//     navigator.geolocation.getCurrentPosition(async (position) => {
+//         lon = position.coords.longitude;
+//         lat = position.coords.latitude;
+//         let url = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&lang=ru&q=${lat},${lon}&days=4`;
+//         let resp = await fetch(url);
+//         let data = await resp.json();
+//         if (weatherDegreesApparent.textContent.includes('Feels like')) {
+//             date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'})}`
+//             humidity.textContent = `Влажность: ${data.current.humidity} %`;
+//             windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
+//             weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
+//             latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
+//             lonUnderMap.textContent = `Долгота: ${lon.toFixed(2)}`;
+//             searchInput.placeholder = 'Найти город';
+//             for (let i = 0; i < data.forecast.forecastday.length; i++) {
+//                 forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()+1]} :`;
+//             }
+//
+//             setAPILanguage('ru');
+//         }
+//     })
+// })
 
 
 degreesC.addEventListener('click', () => {

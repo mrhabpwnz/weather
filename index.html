@@ -12,8 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="owfont-master/css/owfont-regular.css">
-<!--    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>-->
-
 </head>
 <body>
 <div class="wrapper">
@@ -22,8 +20,12 @@
             <button id="refreshButton" class="button button_refresh hover">
                 <i id="rotating" class="fa fa-refresh" aria-hidden="true"></i>
             </button>
-            <button id="en" class="button button_en hover">EN</button>
-            <button id="ru" class="button button_ru hover">RU</button>
+            <select class="lang-menu">
+                <option value="en" id="en" class="button lang-buttons">EN</option>
+                <option value="ru" id="ru" class="button lang-buttons">RU</option>
+            </select>
+<!--            <button id="en" class="button button_en hover">EN</button>-->
+<!--            <button id="ru" class="button button_ru hover">RU</button>-->
             <button id="F" class="button button_F hover">°F</button>
             <button id="C" class="button button_C hover" >°C</button>
         </div>
@@ -31,7 +33,7 @@
             <button id="searchButton" class="button button_search hover">
                 <i class="fa fa-search-plus" aria-hidden="true"></i>
             </button>
-            <input type="text" id="searchInput" class=" header__search-input" placeholder="Найти город">
+            <input type="text" id="searchInput" class=" header__search-input" placeholder="Find a city">
             <button id="microphoneButton" class="button button_microphone hover">
                 <i class="fa fa-microphone" aria-hidden="true"></i>
             </button>

@@ -26,7 +26,6 @@ body:after {
     right: 0;
     bottom: 0;
     background: rgba(0,0,0,.5);
-    z-index: 2;
 }
 
 
@@ -34,7 +33,7 @@ body:after {
     display: flex;
     flex-direction: column;
     position: relative;
-    z-index: 3;
+    z-index: 1;
     color: #fff;
     padding-bottom: 100vh;
 }
@@ -201,6 +200,27 @@ body:after {
     margin-top: 30px;
     padding: 2px;
     color: #4d4d4d;
+}
+
+.lang-menu {
+    border: 2px solid #cccccc;
+    cursor: pointer;
+    width: 7vw;
+    height: 6.4vh;
+    margin-right: 1vw;
+    text-align: center;
+    border-radius: 5px;
+    background: transparent;
+    font-size: 1.4rem;
+    font-family: 'Lato', sans-serif;
+    color: #fff;
+    transition: all .2s;
+    appearance: none;
+}
+
+.lang-buttons {
+    background-color: #4d4d4d;
+    color: #fff;
 }
 
 .buttons_clicked {
