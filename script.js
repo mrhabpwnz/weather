@@ -22,13 +22,13 @@ let lon,
     forecastDegreesSmall = document.querySelectorAll('.degrees-small'),
     daysEN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
     daysRU = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота','Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-    langChangeBtn = document.querySelectorAll('.lang-buttonsEN'),
+    langChangeBtn = document.querySelector('.lang-buttonsEN'),
     degreesC = document.querySelector('#C'),
     degreesF = document.querySelector('#F'),
     inputText = document.querySelector('#searchInput'),
     submitButton = document.querySelector('#searchButton'),
     // scriptList = document.getElementsByTagName('script'),
-    // langChanger = document.querySelector('.lang-menu'),
+    langChanger = document.querySelector('.lang-menu'),
     map,
     marker,
     geocoder,
@@ -47,6 +47,17 @@ async function changeBackground() {
     document.body.style.backgroundImage = `url(${data.urls.full}), ${oldBackground}`;
 }
 changeBackground();
+
+function startTalking() {
+    let SpeechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+    SpeechRecognition.lang = "ru-RU";
+    SpeechRecognition.interimResults = true;
+    SpeechRecognition.onresult = function(event){
+        searchInput.value = event.results[0][0].transcript;
+    };
+    SpeechRecognition.start();
+
+}
 
 const setAPILanguage = (lang) => {
 
@@ -69,7 +80,7 @@ const setAPILanguage = (lang) => {
         });
     });
 
-    document.querySelector('head').appendChild(newAPI);
+    document.querySelector('body').appendChild(newAPI);
 
     return apiLoaded;
 }
@@ -182,7 +193,7 @@ function initMap() {
                     }
                     changeBackground();
                 })
-        } else if(windSpeed.textContent.includes('Wind speed')) {
+        } else if (windSpeed.textContent.includes('Wind speed')) {
                 const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=en&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
@@ -215,24 +226,27 @@ function initMap() {
             }
         })
 
-                function timer() {
-                    time.textContent = new Date().toLocaleTimeString();
-                }
-                setInterval(timer, 1000);
+                // function timer() {
+                //     time.textContent = new Date().toLocaleTimeString();
+                // }
+                // setInterval(timer, 1000);
 
                 const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&days=3`;
                 fetch(api)
                     .then(response => {return response.json();})
                     .then(data => {
-debugger
-                        humidity.textContent = (langChangeBtn.textContent === 'RU' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
-                        windSpeed.textContent = (langChangeBtn.textContent === 'RU' ? 'Скорость ветра:' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChangeBtn.textContent === 'ru' ? ' км/ч' : ' km/h');
-                        degrees.textContent = data.current.temp_c.toFixed() + '° C';
-                        cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                        weatherDegreesApparent.textContent = (langChangeBtn.textContent === 'RU' ? 'Ощущается как: ' : 'Feels like: ' ) + data.current.feelslike_c.toFixed() + '° C';
-                        date.textContent = (langChangeBtn.textContent === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}));
-                        latUnderMap.textContent = (langChangeBtn.textContent === 'RU' ? 'Широта: ' : 'Latitide: ' + lat.toFixed(2));
-                        lonUnderMap.textContent = (langChangeBtn.textContent === 'RU' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
+
+
+                            humidity.textContent = (langChanger.textContent === 'RU' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
+                            windSpeed.textContent = (langChanger.textContent === 'RU' ? 'Скорость ветра:' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChangeBtn.textContent === 'ru' ? ' км/ч' : ' km/h');
+                            degrees.textContent = data.current.temp_c.toFixed() + '° C';
+                            cityName.textContent = `${data.location.name}, ${data.location.country}`;
+                            weatherDegreesApparent.textContent = (langChanger.textContent === 'RU' ? 'Ощущается как: ' : 'Feels like: ' ) + data.current.feelslike_c.toFixed() + '° C';
+                            date.textContent = (langChanger.textContent === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', {weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'}));
+                            latUnderMap.textContent = langChanger.textContent === 'RU'  ? 'Широта: ' + lat.toFixed(2) : 'Latitide: ' + lat.toFixed(2);
+                            lonUnderMap.textContent = (langChanger.textContent === 'RU' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
+
+
 
 
                         for (let i = 0; i < data.forecast.forecastday.length; i++) {
@@ -247,22 +261,25 @@ debugger
                                     weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
                             }
                         }
-
-                        langChangeBtn.textContent === 'RU' ? setAPILanguage('ru') : setAPILanguage('en');
+                        debugger
+                        // langChangeBtn.textContent === 'RU' ? setAPILanguage('ru') : setAPILanguage('en');
 
                     })
             })
     }
 
-function startTalking() {
-    let SpeechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-    SpeechRecognition.lang = "ru-RU";
-    SpeechRecognition.interimResults = true;
-    SpeechRecognition.onresult = function(event){
-        searchInput.value = event.results[0][0].transcript;
-    };
-    SpeechRecognition.start();
 
+for(let button of allButtons) {
+    button.addEventListener('click',() => {
+        button.classList.add('buttons_clicked');
+        button.classList.remove('hover');
+        setTimeout(() => {
+            button.classList.remove('buttons_clicked')
+        }, 999);
+        setTimeout(() => {
+            button.classList.add('hover')
+        }, 1000);
+    })
 }
 
 backgroundChangeBtn.addEventListener('click', changeBackground );
@@ -276,18 +293,8 @@ rotatingElem.addEventListener('click', () => {
     }, 700);
 });
 
-    for(let button of allButtons) {
-        button.addEventListener('click',() => {
-            button.classList.add('buttons_clicked');
-            button.classList.remove('hover');
-            setTimeout(() => {
-                button.classList.remove('buttons_clicked')
-            }, 999);
-            setTimeout(() => {
-                button.classList.add('hover')
-            }, 1000);
-})
-    }
+
+
 
 // langButtonEN.addEventListener('click',  () => {
 //     navigator.geolocation.getCurrentPosition(async (position) => {
