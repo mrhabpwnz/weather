@@ -103,10 +103,13 @@ console.log(data);
 
     bigIcon.src = data.current.condition.icon;
 
-    for(let i = 0; i < data.forecast.forecastday.length; i++) {
-        weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
-    }
+    // for(let i = 0; i < data.forecast.forecastday.length; i++) {
+    //     weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
+    // }
 
+    weatherSmallIcon[0].src = data.forecast.forecastday[0].day.condition.icon;
+    weatherSmallIcon[1].src = data.forecast.forecastday[1].day.condition.icon;
+    weatherSmallIcon[2].src = data.forecast.forecastday[2].day.condition.icon;
 
 
     // for (let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
