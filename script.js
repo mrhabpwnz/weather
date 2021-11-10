@@ -64,7 +64,7 @@ const appendGoogleMapsScript = (lang) => {
     if (window.google) delete google.maps;
 
     let newAPI = document.createElement('script');
-    newAPI.src = 'https://maps.googleapis.com/maps/api/js?' + '&key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw' + '&language=' + lang + '&callback=initMap&v=weekly';
+    newAPI.src = 'https://maps.googleapis.com/maps/api/js?' + '&key=AIzaSyB7nc1BYZqShV9AFTyXIfdkhoe-CY0iiQw' + '&language=' + lang.toLowerCase() + '&callback=initMap&v=weekly';
 
     document.querySelector('body').appendChild(newAPI);
 }
