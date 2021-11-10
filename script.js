@@ -69,19 +69,6 @@ const appendGoogleMapsScript = (lang) => {
     document.querySelector('body').appendChild(newAPI);
 }
 
-// const classnamesToWeathermap = {
-//     'owf-801': ['Cloudy', 'Partly cloudy', 'Overcast', 'Переменная облачность', 'Облачно'],
-//     'owf-800': ['Sunny', 'Clear', 'Солнечно', 'Ясно'],
-//     'owf-802': ['Scattered clouds', 'Пасмурно'],
-//     'owf-803': ['Broken clouds'],
-//     'owf-804': ['Overcast clouds'],
-//     'owf-501': ['Moderate rain', 'Местами дождь'],
-//     'owf-903': ['Patchy rain possible', 'Слабая морось'],
-//     'owf-741': ['Mist', 'Fog', 'Freezing fog', 'Дымка', 'Туман'],
-//     'owf-600': ['Light snow', 'Мелкий снег'],
-//     'owf-503': ['Heavy rain', 'Heavy rain at times', 'Сильный дождь']
-// }
-
 async function fetchWeather(lat, lng) {
     const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&days=3`;
     const response = await fetch(api);
@@ -102,24 +89,11 @@ console.log(data);
     }
 
     bigIcon.src = data.current.condition.icon;
-    debugger
 
     for(let i = 0; i < data.forecast.forecastday.length; i++) {
         weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
     }
 
-    // weatherSmallIcon[0].src = data.forecast.forecastday[0].day.condition.icon;
-    // weatherSmallIcon[1].src = data.forecast.forecastday[1].day.condition.icon;
-    // weatherSmallIcon[2].src = data.forecast.forecastday[2].day.condition.icon;
-
-
-    // for (let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
-    //     if (weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
-    //     for (let i = 0; i < data.forecast.forecastday.length; i++) {
-    //         if (weatherArray.includes(data.forecast.forecastday[i].day.condition.text))
-    //             weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
-    //     }
-    // }
 }
 
 function timer() {
@@ -214,13 +188,12 @@ function initMap() {
                             forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                         }
 
-                        for (let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
-                            if (weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
-                            for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                                if (weatherArray.includes(data.forecast.forecastday[i].day.condition.text))
-                                    weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
-                            }
+                        bigIcon.src = data.current.condition.icon;
+
+                        for(let i = 0; i < data.forecast.forecastday.length; i++) {
+                            weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
                         }
+
                         changeBackground();
                     })
             } else if (windSpeed.textContent.includes('Wind speed')) {
@@ -244,12 +217,10 @@ function initMap() {
                             forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
                         }
 
-                        for (let [classname, weatherArray] of Object.entries(classnamesToWeathermap)) {
-                            if (weatherArray.includes(data.current.condition.text)) bigIcon.classList.add('owf', classname, 'owf-2x')
-                            for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                                if (weatherArray.includes(data.forecast.forecastday[i].day.condition.text))
-                                    weatherSmallIcon[i].classList.add('owf', classname, 'owf-2x')
-                            }
+                        bigIcon.src = data.current.condition.icon;
+
+                        for(let i = 0; i < data.forecast.forecastday.length; i++) {
+                            weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
                         }
                         changeBackground();
                     })
