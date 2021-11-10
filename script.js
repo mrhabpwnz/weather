@@ -74,17 +74,17 @@ async function fetchWeather(lat, lng) {
     const response = await fetch(api);
     const data = await response.json();
 console.log(data);
-    humidity.textContent = (langChanger.value === 'RU' ? 'Влажность: ' : 'Humidity: ') + data.current.humidity + '%';
-    windSpeed.textContent = (langChanger.value === 'RU' ? 'Скорость ветра: ' : 'Wind speed: ') + data.current.wind_kph.toFixed() + (langChanger.value === 'RU' ? ' км/ч' : ' km/h');
+    humidity.textContent = langChanger.value === 'RU' ? 'Влажность: ' : 'Humidity: ' + data.current.humidity + '%';
+    windSpeed.textContent = langChanger.value === 'RU' ? 'Скорость ветра: ' : 'Wind speed: ' + data.current.wind_kph.toFixed() + langChanger.value === 'RU' ? ' км/ч' : ' km/h';
     degrees.textContent = data.current.temp_c.toFixed() + '° C';
     cityName.textContent = `${data.location.name}, ${data.location.country}`;
-    weatherDegreesApparent.textContent = (langChanger.value === 'RU' ? 'Ощущается как: ' : 'Feels like: ') + data.current.feelslike_c.toFixed() + '° C';
-    date.textContent = (langChanger.value === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }));
+    weatherDegreesApparent.textContent = langChanger.value === 'RU' ? 'Ощущается как: ' : 'Feels like: ' + data.current.feelslike_c.toFixed() + '° C';
+    date.textContent = langChanger.value === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
     latUnderMap.textContent = langChanger.value === 'RU' ? 'Широта: ' + lat.toFixed(2) : 'Latitide: ' + lat.toFixed(2);
-    lonUnderMap.textContent = (langChanger.value === 'RU' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
+    lonUnderMap.textContent = langChanger.value === 'RU' ? 'Долгота: ' : 'Longitude: ' + lng.toFixed(2);
 
     for (let i = 0; i < data.forecast.forecastday.length; i++) {
-        forecastDaySmall[i].textContent = (langChanger.value === 'RU' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]);
+        forecastDaySmall[i].textContent = langChanger.value === 'RU' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()];
         forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
     }
 
