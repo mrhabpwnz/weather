@@ -132,8 +132,8 @@ body:after {
 .weather__table-small2,
 .weather__table-small3 {
     position: absolute;
-    left: 13.5vw;
-    top: -0.5vh;
+    left: 13vw;
+    bottom: -14px;
 }
 
 .weather__nextDays {

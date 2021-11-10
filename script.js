@@ -95,13 +95,17 @@ console.log(data);
     date.textContent = (langChanger.value === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }));
     latUnderMap.textContent = langChanger.value === 'RU' ? 'Широта: ' + lat.toFixed(2) : 'Latitide: ' + lat.toFixed(2);
     lonUnderMap.textContent = (langChanger.value === 'RU' ? 'Долгота: ' : 'Longitude: ') + lng.toFixed(2);
-    bigIcon.src = data.current.condition.icon;
+
     for (let i = 0; i < data.forecast.forecastday.length; i++) {
         forecastDaySmall[i].textContent = (langChanger.value === 'RU' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]);
         forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
     }
 
+    bigIcon.src = data.current.condition.icon;
 
+    for(let i = 0; i < data.forecast.forecastday.length; i++) {
+        weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
+    }
 
 
 
