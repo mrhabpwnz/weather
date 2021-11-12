@@ -73,19 +73,19 @@ async function fetchWeather(lat, lng) {
     const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&days=3`;
     const response = await fetch(api);
     const data = await response.json();
-console.log(data);
-    humidity.textContent = langChanger.value === 'RU' ? 'Влажность: ' : 'Humidity: ' + data.current.humidity + '%';
-    windSpeed.textContent = langChanger.value === 'RU' ? 'Скорость ветра: ' : 'Wind speed: ' + data.current.wind_kph.toFixed() + langChanger.value === 'RU' ? ' км/ч' : ' km/h';
-    degrees.textContent = data.current.temp_c.toFixed() + '° C';
+
+    humidity.textContent = langChanger.value === 'RU' ? 'Влажность: ' + data.current.humidity + '%' : 'Humidity: ' + data.current.humidity + '%';
+    windSpeed.textContent = langChanger.value === 'RU' ? 'Скорость ветра: ' + data.current.wind_kph.toFixed() +  ' км/ч' : 'Wind speed: ' + data.current.wind_kph.toFixed() + ' km/h';
+    degrees.textContent = degrees.textContent.includes('C') ? data.current.temp_c.toFixed() + '° C' : data.current.temp_f.toFixed() + '° F';
     cityName.textContent = `${data.location.name}, ${data.location.country}`;
-    weatherDegreesApparent.textContent = langChanger.value === 'RU' ? 'Ощущается как: ' : 'Feels like: ' + data.current.feelslike_c.toFixed() + '° C';
+    weatherDegreesApparent.textContent = langChanger.value === 'RU' && degrees.textContent.includes('C') ? 'Ощущается как: ' + data.current.feelslike_c.toFixed() + '° C' : langChanger.value === 'RU' && degrees.textContent.includes('F') ? 'Ощущается как: ' + data.current.feelslike_f.toFixed() + '° F' : langChanger.value === 'EN' && degrees.textContent.includes('C') ? 'Feels like: ' + data.current.feelslike_c.toFixed() + '° C' : 'Feels like: ' + data.current.feelslike_c.toFixed() + '° F';
     date.textContent = langChanger.value === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
     latUnderMap.textContent = langChanger.value === 'RU' ? 'Широта: ' + lat.toFixed(2) : 'Latitide: ' + lat.toFixed(2);
-    lonUnderMap.textContent = langChanger.value === 'RU' ? 'Долгота: ' : 'Longitude: ' + lng.toFixed(2);
+    lonUnderMap.textContent = langChanger.value === 'RU' ? 'Долгота: ' + lng.toFixed(2) : 'Longitude: ' + lng.toFixed(2);
 
     for (let i = 0; i < data.forecast.forecastday.length; i++) {
         forecastDaySmall[i].textContent = langChanger.value === 'RU' ? daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()] : daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()];
-        forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
+        forecastDegreesSmall[i].textContent = degrees.textContent.includes('C') ? `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C` : `${Math.round(data.forecast.forecastday[i].day.avgtemp_f)}° F`;
     }
 
     bigIcon.src = data.current.condition.icon;
@@ -157,7 +157,7 @@ function initMap() {
                     return results;
                 })
                 .catch((e) => {
-                    alert("Geocode was not successful for the following reason: " + e);
+                    alert(e);
                 });
         }
 
@@ -168,66 +168,13 @@ function initMap() {
         map.addListener("click", (mapsMouseEvent) => {
             lat = mapsMouseEvent.latLng.lat();
             lng = mapsMouseEvent.latLng.lng();
-            if (windSpeed.textContent.includes('Скорость ветра')) {
-                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=ru&days=3`;
-                fetch(api)
-                    .then(response => { return response.json(); })
-                    .then(data => {
-                        humidity.textContent = `Влажность: ${data.current.humidity} %`;
-                        windSpeed.textContent = `Скорость ветра: ${data.current.wind_kph.toFixed()} км/ч`;
-                        degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
-                        cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                        weatherDegreesApparent.textContent = `Ощущается как: ${(data.current.feelslike_c.toFixed())}° C`;
-                        date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`
-                        latUnderMap.textContent = `Широта: ${lat.toFixed(2)}`;
-                        lonUnderMap.textContent = `Долгота: ${lng.toFixed(2)}`;
 
+            fetchWeather(lat, lng);
 
-                        for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                            forecastDaySmall[i].textContent = `${daysRU[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
-                            forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
-                        }
-
-                        bigIcon.src = data.current.condition.icon;
-
-                        for(let i = 0; i < data.forecast.forecastday.length; i++) {
-                            weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
-                        }
-
-                        changeBackground();
-                    })
-            } else if (windSpeed.textContent.includes('Wind speed')) {
-                const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&lang=en&days=3`;
-                fetch(api)
-                    .then(response => { return response.json(); })
-                    .then(data => {
-
-                        humidity.textContent = `Humidity: ${data.current.humidity} %`;
-                        windSpeed.textContent = `Wind speed: ${data.current.wind_kph.toFixed()} км/ч`;
-                        degrees.textContent = `${(data.current.temp_c).toFixed()}° C`;
-                        cityName.textContent = `${data.location.name}, ${data.location.country}`;
-                        weatherDegreesApparent.textContent = `Feels like: ${(data.current.feelslike_c.toFixed())}° C`;
-                        date.textContent = `${new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`
-                        latUnderMap.textContent = `Latitude: ${lat.toFixed(2)}`;
-                        lonUnderMap.textContent = `Longitude: ${lng.toFixed(2)}`;
-
-
-                        for (let i = 0; i < data.forecast.forecastday.length; i++) {
-                            forecastDaySmall[i].textContent = `${daysEN[new Date(data.forecast.forecastday[i].date.replace(new RegExp('-', 'g'), ', ')).getDay()]} :`;
-                            forecastDegreesSmall[i].textContent = `${Math.round(data.forecast.forecastday[i].day.avgtemp_c)}° C`;
-                        }
-
-                        bigIcon.src = data.current.condition.icon;
-
-                        for(let i = 0; i < data.forecast.forecastday.length; i++) {
-                            weatherSmallIcon[i].src = data.forecast.forecastday[i].day.condition.icon;
-                        }
-                        changeBackground();
-                    })
-            }
         })
 
         fetchWeather(lat, lng);
+
     })
 }
 
@@ -306,6 +253,8 @@ degreesF.addEventListener('click', () => {
         }
     })
 })
+
+
 
 setInterval(timer, 1000);
 
