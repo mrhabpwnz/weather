@@ -73,10 +73,10 @@ async function fetchWeather(lat, lng) {
     const api = `https://api.weatherapi.com/v1/forecast.json?key=db4b88ed321d4ab3a8b162900212510&q=${lat},${lng}&days=3`;
     const response = await fetch(api);
     const data = await response.json();
-
+debugger
     humidity.textContent = langChanger.value === 'RU' ? 'Влажность: ' + data.current.humidity + '%' : 'Humidity: ' + data.current.humidity + '%';
     windSpeed.textContent = langChanger.value === 'RU' ? 'Скорость ветра: ' + data.current.wind_kph.toFixed() +  ' км/ч' : 'Wind speed: ' + data.current.wind_kph.toFixed() + ' km/h';
-    degrees.textContent = degrees.textContent.includes('C') ? data.current.temp_c.toFixed() + '° C' : data.current.temp_f.toFixed() + '° F';
+    degrees.textContent = langChanger.value === 'EN' ? data.current.temp_c.toFixed() + '° C' : data.current.temp_f.toFixed() + '° F';
     cityName.textContent = `${data.location.name}, ${data.location.country}`;
     weatherDegreesApparent.textContent = langChanger.value === 'RU' && degrees.textContent.includes('C') ? 'Ощущается как: ' + data.current.feelslike_c.toFixed() + '° C' : langChanger.value === 'RU' && degrees.textContent.includes('F') ? 'Ощущается как: ' + data.current.feelslike_f.toFixed() + '° F' : langChanger.value === 'EN' && degrees.textContent.includes('C') ? 'Feels like: ' + data.current.feelslike_c.toFixed() + '° C' : 'Feels like: ' + data.current.feelslike_c.toFixed() + '° F';
     date.textContent = langChanger.value === 'RU' ? new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('ru-RU', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : new Date(data.location.localtime.substr(0, 10).replace(new RegExp('-', 'g'), ', ')).toLocaleDateString('en-EN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
